@@ -115,6 +115,8 @@ jobs:
     needs: deploy
     if: needs.deploy.result == 'success' && (github.ref == 'refs/heads/main' || github.event_name == 'release')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout for tagging
         uses: actions/checkout@v4
