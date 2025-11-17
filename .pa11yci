@@ -7,13 +7,4 @@
   ],
   "standard": "WCAG2AA"
 }
-{
-  "defaults": {
-    "timeout": 30000
-  },
-  "urls": [
-    "http://127.0.0.1:8080"
-  ],
-  "standard": "WCAG2AA"
-}
 ```
