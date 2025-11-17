@@ -22,7 +22,7 @@ This document describes the CI-driven deployment approach for the Elmentor landi
 - When `main` receives a merge, the `deploy` job runs:
   - Build the site
   - Run audits again (Lighthouse, a11y, i18n) — any failure stops the pipeline and prevents deployment
-  - Publish built artifacts to GitHub Pages via `actions-gh-pages` (CI-managed), writing audit artifacts to CI logs
+  - Publish built artifacts to GitHub Pages via the official GitHub Actions Pages flow (CI-managed): `actions/configure-pages` + `actions/upload-pages-artifact` + `actions/deploy-pages` (no `gh-pages` branch required). Ensure the repository Pages source is set to **GitHub Actions**.
   - Tag the commit with a `deploy-YYYYMMDD-HHMM-<SHA>` tag for traceability
   - Create a GitHub Release optionally if a Release was published
 
@@ -46,7 +46,7 @@ This document describes the CI-driven deployment approach for the Elmentor landi
 - Run Lighthouse locally after building: `npx http-server ./build -p 8080 &` then use Lighthouse CLI or Chrome devtools
 
 ## CI Secrets & Configuration
-- Ensure `secrets.GITHUB_TOKEN` is available for Actions (default) and has permission to push tags and update `gh-pages`.
+- Ensure `secrets.GITHUB_TOKEN` is available for Actions (default) and has permission to create tags and to deploy Pages. If you still have a `gh-pages` branch created by earlier runs, delete it to avoid conflicts with the Actions-based deployment.
 - Optional: use a personal access token for cross-repository deploys or organization-wide secrets.
 
 ---

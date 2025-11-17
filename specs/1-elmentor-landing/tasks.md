@@ -12,7 +12,7 @@ description: "Task list for building the Elmentor landing page"
 - [ ] T002 Add development dependency `http-server` for local CI-level audits and `pa11y-ci` and `lhci` for audits — update `package.json` scripts [P]
 - [ ] T003 Configure ESLint + Prettier and add GitHub pre-commit hooks (husky) for code formatting and linting [P]
 - [ ] T004 Initialize `i18n/` folder with `en.json` and `ar.json`, and add `scripts/check-i18n.js` (verify key parity) under `scripts/` [P]
-- [ ] T005 Create `.github/workflows/deploy-pages.yml` for CI — include build, `npm run check-i18n`, pa11y, LHCI, and actions-gh-pages deployment (verify commit/tag on deploy)
+ - [ ] T005 Create `.github/workflows/deploy-pages.yml` for CI — include build, `npm run check-i18n`, pa11y, LHCI, and use the official Pages Actions deploy flow (no `gh-pages` branch): `actions/configure-pages` + `actions/upload-pages-artifact` + `actions/deploy-pages`.
 
 ---
 
