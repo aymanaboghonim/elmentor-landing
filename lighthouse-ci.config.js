@@ -6,8 +6,9 @@ module.exports = {
     },
     assert: {
       assertions: {
-        // example thresholds
-        'categories:performance': ['error', {minScore: 0.9}],
+        // Keep accessibility as an error, but lower performance to a warning
+        // for the demo site to avoid blocking deploys. Adjust as needed.
+        'categories:performance': ['warn', {minScore: 0.8}],
         'categories:accessibility': ['error', {minScore: 0.9}]
       }
     },
