@@ -11,6 +11,7 @@ const i18nPaths = {
   ar: 'i18n/ar.json'
 }
 let currentLang = localStorage.getItem('el_lang') || 'en'
+let currentTheme = localStorage.getItem('el_theme') || 'auto'
 
 async function loadTranslations(lang){
   const path = i18nPaths[lang]
@@ -60,12 +61,44 @@ toggle.addEventListener('click', ()=>{
   updateToggle()
 })
 
-// Demo content for circles and news
-const circlesData = [
-  {id:'learn'},
-  {id:'tech'},
-  {id:'career'}
-]
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle')
+
+function applyTheme(theme){
+  const root = document.documentElement
+  if(theme === 'auto'){
+    root.removeAttribute('data-theme')
+  } else {
+    root.setAttribute('data-theme', theme)
+  }
+  updateThemeToggle()
+}
+
+function updateThemeToggle(){
+  const root = document.documentElement
+  const effectiveTheme = root.getAttribute('data-theme') || 
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+  themeToggle.textContent = effectiveTheme === 'dark' ? '☀️' : '🌙'
+  themeToggle.setAttribute('aria-label', effectiveTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode')
+}
+
+themeToggle.addEventListener('click', ()=>{
+  const root = document.documentElement
+  const currentEffective = root.getAttribute('data-theme') || 
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+  
+  const newTheme = currentEffective === 'dark' ? 'light' : 'dark'
+  currentTheme = newTheme
+  localStorage.setItem('el_theme', newTheme)
+  applyTheme(newTheme)
+})
+
+// Listen for system theme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{
+  if(currentTheme === 'auto'){
+    updateThemeToggle()
+  }
+})
 
 // (module functions for circles & news moved to src/components/*)
 
@@ -84,8 +117,9 @@ async function bootstrap(){
   const res = await fetch(i18nPaths[currentLang])
   const t = await res.json()
   applyTranslations(t)
-  renderCircles(t.circles)
-  renderNews(t.news)
+  initCircles(t)
+  initNews(t)
   updateToggle()
+  applyTheme(currentTheme)
 }
 bootstrap()
