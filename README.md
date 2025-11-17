@@ -20,6 +20,11 @@ Run a11y locally with pa11y:
 
 ```pwsh
 npx pa11y-ci --ci
+
+Deployment
+----------
+
+This repo is configured to deploy automatically to GitHub Pages via the `.github/workflows/deploy-pages.yml` workflow on pushes to `main` or when a release is published. The site is built from the repository root (the demo is static), and audit artifacts (Pa11y, Lighthouse) are stored with each CI run.
 ```
 
 This repo is demo-only and contains a frontend-only Contact/Join form that shows a localized "Thank you" message on submit.
