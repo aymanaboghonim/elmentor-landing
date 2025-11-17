@@ -121,19 +121,32 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Tag release (if release event)
-        if: github.event_name == 'release'
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git tag -a "v${{ github.event.release.tag_name }}" -m "Release ${{ github.event.release.tag_name }}"
-          git push origin "v${{ github.event.release.tag_name }}"
-
-      - name: Tag deployment for traceability (push to main)
+      - name: Create deployment release (push to main only)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        id: create_deploy_release
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          TAG="deploy-$(date +%Y%m%d-%H%M)-${GITHUB_SHA:0:7}"
-          git tag -a "$TAG" -m "Deploy $TAG to GitHub Pages"
-          git push origin "$TAG"
+          TAG=deploy-$(date +%Y%m%d-%H%M)-${GITHUB_SHA:0:7}
+          echo "TAG=$TAG" >> $GITHUB_ENV
+      - name: Publish deploy release via API
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.TAG }}
+          release_name: ${{ env.TAG }}
+          body: "Automated deploy tag for commit ${{ github.sha }} (workflow run: ${{ github.run_id }})."
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release for published Releases (ensure traceability)
+        if: github.event_name == 'release'
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          release_name: Release-${{ github.event.release.tag_name }}
+          body: "Release created via workflow for ${{ github.event.release.tag_name }} (deploy job)."
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
