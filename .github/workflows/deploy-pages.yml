@@ -1,4 +1,5 @@
 name: CI — build, test, and deploy
+
 permissions:
   contents: write
   packages: write
@@ -29,7 +30,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install
+      - name: Install dependencies
         run: npm ci
 
       - name: Build
@@ -40,7 +41,6 @@ jobs:
 
       - name: Start static server for audits
         run: |
-          # start http-server in background; ensure it is ready before continuing
           npx http-server ./ -p 8080 --silent &
           npx wait-on http://127.0.0.1:8080 -t 30000
 
@@ -80,20 +80,24 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install
+      - name: Install dependencies
         run: npm ci
 
       - name: Build
         run: npm run build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          publish_branch: gh-pages
+      - name: Deploy to GitHub Pages (modern workflow)
+        uses: actions/configure-pages@v3
 
-      - name: Tag release
+      - name: Upload site directory
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: './'  # your build output directory
+
+      - name: Publish to GitHub Pages
+        uses: actions/deploy-pages@v1
+
+      - name: Tag release (if release event)
         if: github.event_name == 'release'
         run: |
           git config --local user.email "action@github.com"
@@ -101,13 +105,7 @@ jobs:
           git tag -a "v${{ github.event.release.tag_name }}" -m "Release ${{ github.event.release.tag_name }}"
           git push origin --tags
 
-      - name: Create deployment tag for traceability
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Create deployment tag for traceability
+      - name: Tag deployment for traceability (push to main)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           git config --local user.email "action@github.com"
