@@ -1,4 +1,9 @@
 name: CI — build, test, and deploy
+permissions:
+  contents: read
+  packages: write
+  pages: write
+  id-token: write
 
 on:
   push:
