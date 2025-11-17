@@ -52,6 +52,18 @@ description: "Task list template for feature implementation"
 - [ ] T002 Initialize [language] project with [framework] dependencies
 - [ ] T003 [P] Configure linting and formatting tools
 
+## Constitution-driven Tasks
+
+Use these example tasks to ensure each feature aligns with the Elmentor Constitution. These items are mandatory for landing page features:
+
+- [ ] CDT-001 Ensure English and Spanish content keys are present and included in translation pipeline
+- [ ] CDT-002 Add Lighthouse performance budget check to CI and local scripts
+- [ ] CDT-003 Wire up a11y checks (axe or equivalent) to PRs and CI
+- [ ] CDT-004 Confirm GitHub Pages publish script works and adds a verification step for bilingual content
+ - [ ] CDT-004 Confirm GitHub Actions workflow exists for GitHub Pages that runs the deploy and verification steps (performance, a11y, i18n) on CI
+ - [ ] CDT-005 Add CI rollback procedure and verify that a revert creates an automatic rollback deployment
+ - [ ] CDT-006 Ensure deployment is Actions-driven: avoid manual gh-pages pushes and document how restore/rollback works
+
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites)

@@ -1,0 +1,55 @@
+{
+  "hero":{
+    "title":"Welcome to Elmentor",
+    "subtitle":"A mentorship community for growth, learning, and meaningful connections.",
+    "cta":"Join Us"
+  },
+  "about":{
+    "title":"About Elmentor",
+    "text":"Elmentor connects mentors and learners across industries. We help you find a circle that matches your growth goals."
+  },
+  "circles":{
+    "title":"Circles",
+    "learn":{
+      "title":"Learn Circle",
+      "desc":"Peer learning groups and study sessions"
+    },
+    "tech":{
+      "title":"Tech Circle",
+      "desc":"Focused on software and tools"
+    },
+    "career":{
+      "title":"Career Circle",
+      "desc":"Mentoring for career growth"
+    }
+  },
+  "activities":{
+    "title":"Activities & Benefits",
+    "benefit1":"Monthly expert sessions",
+    "benefit2":"Peer-led workshops",
+    "benefit3":"1:1 mentor match"
+  },
+  "founder":{
+    "title":"Founder Story",
+    "text":"Our founder started Elmentor after experiencing the power of mentorship in their own career."
+  },
+  "news":{
+    "title":"News & Updates",
+    "one":{
+      "title":"Program launch",
+      "summary":"We launched the first cohort this month."
+    }
+  },
+  "contact":{
+    "title":"Contact / Join",
+    "name":"Name",
+    "email":"Email",
+    "privacy":"We will not share your email without consent.",
+    "submit":"Send",
+    "thanks":"Thank you! We'll be in touch soon."
+  },
+  "footer":{
+    "privacy":"Privacy",
+    "terms":"Terms"
+  }
+}

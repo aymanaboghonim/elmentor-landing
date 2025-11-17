@@ -1,3 +1,4 @@
+Merge Gate: All feature work must be delivered as a Pull Request into `main`; verify that PR pipelines run `Constitution Check` items. On merge to `main`, CI must produce an auditable deployment with commit/tag link and retention for a11y/Lighthouse artifacts.
 # Implementation Plan: [FEATURE]
 
 **Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
@@ -32,6 +33,8 @@
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
 [Gates determined based on constitution file]
+
+Deployment Gate: If GitHub Pages is the target, you MUST include a GitHub Actions workflow that performs build, a11y (axe/pa11y), performance (Lighthouse), and translation checks. Provide a documented rollback path, and list tagging/release practices. If an alternate host is used, explain how the same validations will run in CI.
 
 ## Project Structure
 

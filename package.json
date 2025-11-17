@@ -1,0 +1,19 @@
+{
+  "name": "elmentor-landing",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "http-server ./ -p 8080 --silent",
+    "build": "echo build not required for demo",
+    "test": "echo 'No unit tests in demo'",
+    "check-i18n": "node scripts/check-i18n.js",
+    "lint": "eslint . --ext .js,.html",
+    "format": "prettier --write '.**/*.{js,css,md,html,json}'"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "pa11y-ci": "^4.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^2.8.0"
+  }
+}

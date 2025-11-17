@@ -113,3 +113,17 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+
+## Constitution Check
+
+Every spec for the Elmentor landing page MUST include a Constitution Check section that confirms how the feature satisfies the Constitution principles. At minimum, list:
+
+- Clean Code: tests attached, lint rules and code ownership
+- UX Consistency: design tokens/components referenced, designer review assigned
+- Bilingual Support: translation keys and language switch plan
+- Performance: performance budget and Lighthouse target
+- Deployment: GitHub Pages publish checklist or CI step
+ - Deployment: GitHub Actions workflow MUST be present; script must run the deploy to GitHub Pages and include release tagging semantics. If a different hosting target is used, document why and provide equivalent checks for performance, a11y and bilingual validation.
+ - Deployment: All feature changes MUST be submitted as Pull Requests to `main`. The project MUST have a GitHub Actions workflow that triggers on merges to `main` (and release events) to run build → verify → deploy steps. The spec MUST state the expected verify steps (Lighthouse target, a11y scan, i18n checks) and the release tagging/traceability approach. If an alternate host is used, document how the same verification gates run in CI.
+
+If any item is not applicable, document the reason and mitigation.
