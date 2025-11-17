@@ -90,7 +90,9 @@ jobs:
         uses: actions/configure-pages@v3
 
       - name: Upload site directory
-        uses: actions/upload-pages-artifact@v1
+        # Updated to a newer release of the pages uploader to avoid the deprecated upload-artifact v3 dependency.
+        # Prefer a released tag (e.g. @v2) for stability; if no v2 exists, use @main or a specific commit SHA that includes the fix.
+        uses: actions/upload-pages-artifact@v2
         with:
           path: './'  # your build output directory
 
