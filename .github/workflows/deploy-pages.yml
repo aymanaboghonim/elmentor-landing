@@ -1,98 +1,105 @@
 name: CI — build, test, and deploy
 
 on:
-    push:
-        branches:
-            - main
-    pull_request:
-        branches:
-            - main
-    release:
-        types: [published]
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  release:
+    types: [published]
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-            - name: Install
-              run: npm ci
+      - name: Install
+        run: npm ci
 
-            - name: Build
-              run: npm run build
+      - name: Build
+        run: npm run build
 
-            - name: Run unit tests
-              run: npm test --silent
+      - name: Run unit tests
+        run: npm test --silent
 
-            - name: Start static server for audits
-              run: npx http-server ./ -p 8080 &
+      - name: Start static server for audits
+        run: |
+          # start http-server in background; ensure it is ready before continuing
+          npx http-server ./ -p 8080 --silent &
+          npx wait-on http://127.0.0.1:8080 -t 30000
 
-            - name: Run accessibility checks (Pa11y)
-              run: npx pa11y-ci --reporter json > pa11y.json
+      - name: Run accessibility checks (Pa11y)
+        run: npx pa11y-ci --ci --reporter json --output-file pa11y.json
 
-            - name: Run Lighthouse audit
-              uses: treosh/lighthouse-ci-action@v8
-              with:
-                  urls: "http://127.0.0.1:8080"
-                  configPath: ./lighthouse-ci.config.js
+      - name: Run Lighthouse audit
+        uses: treosh/lighthouse-ci-action@v8
+        with:
+          urls: "http://127.0.0.1:8080"
+          configPath: ./lighthouse-ci.config.js
 
-            - name: Verify translations (i18n)
-              run: npm run check-i18n
+      - name: Verify translations (i18n)
+        run: npm run check-i18n
 
-            - name: Upload audit artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: audits
-                  path: |
-                      pa11y.json
-                      ./lhci_reports/**
+      - name: Upload audit artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: audits
+          path: |
+            pa11y.json
+            ./lhci_reports/**
 
-    deploy:
-        needs: build
-        runs-on: ubuntu-latest
-        if: github.ref == 'refs/heads/main' || github.event_name == 'release'
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-            - name: Install
-              run: npm ci
+      - name: Install
+        run: npm ci
 
-            - name: Build
-              run: npm run build
+      - name: Build
+        run: npm run build
 
-            - name: Deploy to GitHub Pages
-              uses: peaceiris/actions-gh-pages@v3
-              with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: ./
-                  publish_branch: gh-pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_branch: gh-pages
 
-            - name: Tag release
-              if: github.event_name == 'release'
-              run: |
-                  git config --local user.email "action@github.com"
-                  git config --local user.name "GitHub Action"
-                  git tag -a "v${{ github.event.release.tag_name }}" -m "Release ${{ github.event.release.tag_name }}"
-                  git push origin --tags
+      - name: Tag release
+        if: github.event_name == 'release'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "v${{ github.event.release.tag_name }}" -m "Release ${{ github.event.release.tag_name }}"
+          git push origin --tags
 
-            - name: Create deployment tag for traceability
-              if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-              run: |
-                  git config --local user.email "action@github.com"
-                  git config --local user.name "GitHub Action"
-                  TAG="deploy-$(date +%Y%m%d-%H%M)-${GITHUB_SHA:0:7}"
-                  git tag -a "$TAG" -m "Deploy $TAG to GitHub Pages"
-                  git push origin --tags
+      - name: Create deployment tag for traceability
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          TAG="deploy-$(date +%Y%m%d-%H%M)-${GITHUB_SHA:0:7}"
+          git tag -a "$TAG" -m "Deploy $TAG to GitHub Pages"
+          git push origin --tags

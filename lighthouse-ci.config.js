@@ -2,7 +2,6 @@ module.exports = {
   ci: {
     collect: {
       url: ["http://127.0.0.1:8080"],
-      startServerCommand: "npx http-server ./ -p 8082",
       numberOfRuns: 1
     },
     assert: {
