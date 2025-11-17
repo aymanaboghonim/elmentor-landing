@@ -1,10 +1,13 @@
 name: CI — build, test, and deploy
 
 permissions:
-  contents: write
-  packages: write
+  contents: read
   pages: write
   id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 on:
   push:
@@ -42,6 +45,7 @@ jobs:
       - name: Start static server for audits
         run: |
           npx http-server ./ -p 8080 --silent &
+          echo $! > server.pid
           npx wait-on http://127.0.0.1:8080 -t 30000
 
       - name: Run accessibility checks (Pa11y)
@@ -57,6 +61,13 @@ jobs:
       - name: Verify translations (i18n)
         run: npm run check-i18n
 
+      - name: Stop audit server
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+          fi
+
       - name: Upload audit artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -65,39 +76,50 @@ jobs:
             pa11y.json
             ./lhci_reports/**
 
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare static site bundle
+        run: |
+          rm -rf dist
+          rsync -av --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude '.vscode/' \
+            --exclude 'node_modules/' \
+            --exclude 'specs/' \
+            --exclude 'docs/' \
+            --exclude 'scripts/' \
+            --exclude '.specify/' \
+            --exclude '*.log' \
+            ./ dist
+
+      - name: Upload static site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout
+      - name: Publish to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  tags:
+    needs: deploy
+    if: needs.deploy.result == 'success' && (github.ref == 'refs/heads/main' || github.event_name == 'release')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout for tagging
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Deploy to GitHub Pages (modern workflow)
-        uses: actions/configure-pages@v3
-
-      - name: Upload site directory
-        # Updated to a newer release of the pages uploader to avoid the deprecated upload-artifact v3 dependency.
-        # Prefer a released tag (e.g. @v2) for stability; if no v2 exists, use @main or a specific commit SHA that includes the fix.
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: './'  # your build output directory
-
-      - name: Publish to GitHub Pages
-        uses: actions/deploy-pages@v1
 
       - name: Tag release (if release event)
         if: github.event_name == 'release'
@@ -105,7 +127,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git tag -a "v${{ github.event.release.tag_name }}" -m "Release ${{ github.event.release.tag_name }}"
-          git push origin --tags
+          git push origin "v${{ github.event.release.tag_name }}"
 
       - name: Tag deployment for traceability (push to main)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -114,4 +136,4 @@ jobs:
           git config --local user.name "GitHub Action"
           TAG="deploy-$(date +%Y%m%d-%H%M)-${GITHUB_SHA:0:7}"
           git tag -a "$TAG" -m "Deploy $TAG to GitHub Pages"
-          git push origin --tags
+          git push origin "$TAG"
