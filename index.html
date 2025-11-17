@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Elmentor — Mentorship Community</title>
+  <meta name="description" content="Elmentor is a mentorship community that connects learners with mentors across professional circles.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <button class="lang-toggle" id="langToggle" aria-label="Toggle language">العربية</button>
+      <ul class="nav-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#circles">Circles</a></li>
+        <li><a href="#activities">Activities</a></li>
+        <li><a href="#founder">Founder</a></li>
+        <li><a href="#news">News</a></li>
+        <li><a href="#contact">Contact/Join</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="hero" class="hero">
+      <h1 data-i18n="hero.title">Welcome to Elmentor</h1>
+      <p data-i18n="hero.subtitle">A mentorship community for growth, learning, and meaningful connections.</p>
+      <button class="primary-cta" id="ctaJoin" data-target="#contact" data-i18n="hero.cta">Join Us</button>
+    </section>
+
+    <section id="about" class="about">
+      <h2 data-i18n="about.title">About Elmentor</h2>
+      <p data-i18n="about.text">Elmentor connects mentors and learners across industries. We help you find a circle that matches your growth goals.</p>
+    </section>
+
+    <section id="circles" class="circles">
+      <h2 data-i18n="circles.title">Circles</h2>
+      <div class="grid" id="circlesGrid">
+        <!-- Cards injected by script -->
+      </div>
+    </section>
+
+    <section id="activities" class="activities">
+      <h2 data-i18n="activities.title">Activities & Benefits</h2>
+      <ul>
+        <li data-i18n="activities.benefit1">Monthly expert sessions</li>
+        <li data-i18n="activities.benefit2">Peer-led workshops</li>
+        <li data-i18n="activities.benefit3">1:1 mentor match</li>
+      </ul>
+    </section>
+
+    <section id="founder" class="founder">
+      <h2 data-i18n="founder.title">Founder Story</h2>
+      <div class="founder-grid">
+        <img src="assets/founder.svg" alt="Founder portrait" loading="lazy" width="240">
+        <p data-i18n="founder.text">Our founder started Elmentor after experiencing the power of mentorship in their own career.</p>
+      </div>
+    </section>
+
+    <section id="news" class="news">
+      <h2 data-i18n="news.title">News & Updates</h2>
+      <div id="newsList"></div>
+    </section>
+
+    <section id="contact" class="contact">
+      <h2 data-i18n="contact.title">Contact / Join</h2>
+      <form id="joinForm" aria-label="Contact form">
+        <label for="name" data-i18n="contact.name">Name</label>
+        <input id="name" name="name" type="text" placeholder="" />
+
+        <label for="email" data-i18n="contact.email">Email</label>
+        <input id="email" name="email" type="email" required placeholder="" />
+
+        <p class="hint" data-i18n="contact.privacy">We will not share your email without consent.</p>
+        <button type="submit" class="primary-cta" data-i18n="contact.submit">Send</button>
+      </form>
+      <div id="thanksMessage" class="thanks" aria-live="polite" hidden>
+        <p data-i18n="contact.thanks">Thank you! We'll be in touch soon.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; Elmentor. <a href="#" data-i18n="footer.privacy">Privacy</a> · <a href="#" data-i18n="footer.terms">Terms</a></p>
+    <ul class="social">
+      <li><a href="#" aria-label="Instagram">Instagram</a></li>
+      <li><a href="#" aria-label="Twitter">Twitter</a></li>
+    </ul>
+  </footer>
+
+  <script type="module" src="script.js" defer></script>
+</body>
+</html>

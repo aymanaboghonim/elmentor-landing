@@ -1,0 +1,24 @@
+# Node
+node_modules/
+.npm/
+npm-debug.log*
+.pnpm-debug.log*
+# Build
+dist/
+build/
+.cache/
+# OS
+.DS_Store
+Thumbs.db
+# IDE
+.vscode/
+.idea/
+# env
+.env*
+# Logs
+logs
+*.log
+# GH Pages
+gh-pages
+# Local runtime files
+*.local
