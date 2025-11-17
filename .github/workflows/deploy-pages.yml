@@ -45,7 +45,7 @@ jobs:
           npx wait-on http://127.0.0.1:8080 -t 30000
 
       - name: Run accessibility checks (Pa11y)
-        run: npx pa11y-ci --reporter json --output-file pa11y.json
+        run: npx pa11y-ci --reporter json > pa11y.json
 
       - name: Run Lighthouse audit
         uses: treosh/lighthouse-ci-action@v8
